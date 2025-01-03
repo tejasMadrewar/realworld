@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:realworld # Example database URL; replace with your actual database
+#    username: sa            # Database username
+#    password: password       # Database password
+    driver-class-name: org.h2.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+jpa:
+  hibernate:
+    ddl-auto: update
+  show-sql: true
+  properties:
+    hibernate:
+      format_sql: true
+      use_sql_comments: true
