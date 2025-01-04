@@ -4,6 +4,9 @@ import lombok.Builder;
 
 @Builder
 public class UserResponse {
-    public  Long id;
     public String email;
+    public String token;
+    public String username;
+    public String bio;
+    public String image;
 }

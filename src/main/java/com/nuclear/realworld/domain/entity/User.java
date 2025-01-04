@@ -14,4 +14,9 @@ public class User {
     private String email;
     private String token;
     private String password;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Profile profile;
+
 }
