@@ -20,6 +20,7 @@ public class UserAssembler {
                 .username(user.getProfile()
                         .getUsername())
                 .email(user.getEmail())
+                .token(user.getToken())
                 .bio(user.getProfile()
                         .getBio())
                 .image(user.getProfile()

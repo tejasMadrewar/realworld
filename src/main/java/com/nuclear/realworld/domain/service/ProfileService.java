@@ -20,4 +20,8 @@ public class ProfileService {
                 .image(DEFAULT_IMG_URL)
                 .build();
     }
+
+    public Profile save(Profile profile) {
+        return profileRepository.save(profile);
+    }
 }

@@ -1,6 +1,6 @@
 package com.nuclear.realworld.api.exception;
 
-import com.nuclear.realworld.domain.exception.EmailNotAvilableException;
+import com.nuclear.realworld.domain.exception.EmailNotAvailableException;
 import com.nuclear.realworld.domain.exception.UsernameNotAvilableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,8 +18,8 @@ public class ApiExceptionHandler {
         return "Error: Username already exists.";
     }
 
-    @ExceptionHandler(EmailNotAvilableException.class)
-    public String handleEmailAlreadyExistsException(EmailNotAvilableException ex) {
+    @ExceptionHandler(EmailNotAvailableException.class)
+    public String handleEmailAlreadyExistsException(EmailNotAvailableException ex) {
         return "Error: email already exists.";
     }
 

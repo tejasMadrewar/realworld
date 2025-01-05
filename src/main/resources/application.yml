@@ -1,3 +1,8 @@
 spring:
   application:
     name: realworld
+api:
+  security:
+    token:
+      secret: "0123450123456789ABCDEFG0123456789ABCDEFGHIJHIJ67890123456789ABCDEFGHIJABCDEFGHIJ"
+      expiration: 1000000
