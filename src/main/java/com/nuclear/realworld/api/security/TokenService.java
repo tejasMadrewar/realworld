@@ -1,5 +1,8 @@
 package com.nuclear.realworld.api.security;
 
+import com.nuclear.realworld.domain.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -11,12 +14,14 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class TokenService {
 
     private final AuthProperties properties;
+    private final UserRepository repository;
 
 
     public String generateToken(String subject) {
@@ -48,4 +53,41 @@ public class TokenService {
         return Keys.hmacShaKeyFor(bytes);
     }
 
+    private <T> T extractClaim(String token, Function<Claims, T> claimsTFunction) {
+        final Claims claims = extractAllClaims(token);
+        return claimsTFunction.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException ex) {
+            throw new RuntimeException("Invalid token.");
+        }
+    }
+
+    public boolean isTokenValid(String token, String subject) {
+        var user = repository.findByEmail(subject);
+        if (user.isEmpty()) {
+            return false;
+        }
+        final String email = extractEmail(token);
+        return email.equals(subject) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
 }

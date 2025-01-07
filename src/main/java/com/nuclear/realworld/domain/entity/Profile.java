@@ -24,4 +24,15 @@ public class Profile {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "id=" + id +
+                ", following=" + following +
+                ", image='" + image + '\'' +
+                ", bio='" + bio + '\'' +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

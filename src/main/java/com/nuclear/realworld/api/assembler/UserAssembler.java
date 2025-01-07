@@ -2,6 +2,7 @@ package com.nuclear.realworld.api.assembler;
 
 import com.nuclear.realworld.api.model.UserRegister;
 import com.nuclear.realworld.api.model.UserResponse;
+import com.nuclear.realworld.api.model.UserUpdate;
 import com.nuclear.realworld.domain.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -26,5 +27,10 @@ public class UserAssembler {
                 .image(user.getProfile()
                         .getImage())
                 .build();
+    }
+
+    public void copyToEntity(UserUpdate userUpdate, User user) {
+        modelMapper.map(userUpdate, user);
+        modelMapper.map(userUpdate, user.getProfile());
     }
 }

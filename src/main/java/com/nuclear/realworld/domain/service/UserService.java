@@ -1,5 +1,6 @@
 package com.nuclear.realworld.domain.service;
 
+import com.nuclear.realworld.api.security.AuthUtils;
 import com.nuclear.realworld.api.security.exception.EmailNotFoundException;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.User;
@@ -7,7 +8,6 @@ import com.nuclear.realworld.domain.exception.EmailNotAvailableException;
 import com.nuclear.realworld.domain.exception.UsernameNotAvilableException;
 import com.nuclear.realworld.domain.repository.ProfileRepository;
 import com.nuclear.realworld.domain.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class UserService {
     final private ProfileRepository profileRepository;
     final private ProfileService profileService;
     final private PasswordEncoder passwordEncoder;
-    final private EntityManager entityManager;
+    final private AuthUtils authUtils;
 
     @Transactional
     public User save(User user, Profile profile) {
@@ -64,5 +64,9 @@ public class UserService {
     public User getByEmail(@NotBlank String email) {
         return userRepository.getByEmail(email)
                 .orElseThrow(EmailNotFoundException::new);
+    }
+
+    public User getCurrentUser() {
+        return getByEmail(authUtils.getCurrentUserEmail());
     }
 }
