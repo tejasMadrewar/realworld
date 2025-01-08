@@ -1,4 +1,4 @@
-package com.nuclear.realworld.api.model;
+package com.nuclear.realworld.api.model.user;
 
 
 import jakarta.annotation.Nullable;

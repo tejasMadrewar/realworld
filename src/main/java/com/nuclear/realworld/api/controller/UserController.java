@@ -1,8 +1,8 @@
 package com.nuclear.realworld.api.controller;
 
 import com.nuclear.realworld.api.assembler.UserAssembler;
-import com.nuclear.realworld.api.model.UserResponse;
-import com.nuclear.realworld.api.model.UserUpdate;
+import com.nuclear.realworld.api.model.user.UserResponse;
+import com.nuclear.realworld.api.model.user.UserUpdate;
 import com.nuclear.realworld.api.security.authorization.CheckSecurity;
 import com.nuclear.realworld.domain.entity.User;
 import com.nuclear.realworld.domain.service.UserService;

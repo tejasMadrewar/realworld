@@ -1,6 +1,7 @@
 package com.nuclear.realworld.api.exception;
 
 import com.nuclear.realworld.domain.exception.EmailNotAvailableException;
+import com.nuclear.realworld.domain.exception.ProfileNotFoundException;
 import com.nuclear.realworld.domain.exception.UsernameNotAvilableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,31 +15,38 @@ import java.util.Map;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(UsernameNotAvilableException.class)
-    public String handleUsernameAlreadyExistsException(UsernameNotAvilableException ex) {
+    public String handleUsernameAlreadyExistsException(
+            UsernameNotAvilableException ex) {
         return "Error: Username already exists.";
     }
 
     @ExceptionHandler(EmailNotAvailableException.class)
-    public String handleEmailAlreadyExistsException(EmailNotAvailableException ex) {
+    public String handleEmailAlreadyExistsException(
+            EmailNotAvailableException ex) {
         return "Error: email already exists.";
     }
 
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public String handleProfileNotFoundException(ProfileNotFoundException ex) {
+        return "Error: Profile not found.";
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorMsg handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ErrorMsg handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
-        ex.getBindingResult()
-                .getAllErrors()
-                .forEach(error -> {
-                    String fieldName = ((FieldError) error).getField();
-                    String errorMessage = error.getDefaultMessage();
-                    errors.put(fieldName, errorMessage);
-                });
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
         return new ErrorMsg(errors);
     }
 
     public class ErrorMsg {
         final public Map<String, String> errors;
+
         ErrorMsg(Map<String, String> errors) {
             this.errors = errors;
         }

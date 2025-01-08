@@ -1,8 +1,8 @@
 package com.nuclear.realworld.api.assembler;
 
-import com.nuclear.realworld.api.model.UserRegister;
-import com.nuclear.realworld.api.model.UserResponse;
-import com.nuclear.realworld.api.model.UserUpdate;
+import com.nuclear.realworld.api.model.user.UserRegister;
+import com.nuclear.realworld.api.model.user.UserResponse;
+import com.nuclear.realworld.api.model.user.UserUpdate;
 import com.nuclear.realworld.domain.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

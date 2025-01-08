@@ -1,10 +1,9 @@
 package com.nuclear.realworld.api.security;
 
 import com.nuclear.realworld.api.assembler.UserAssembler;
-import com.nuclear.realworld.api.model.UserAuthenticate;
-import com.nuclear.realworld.api.model.UserResponse;
-import com.nuclear.realworld.api.model.UserToken;
-import com.nuclear.realworld.domain.entity.Profile;
+import com.nuclear.realworld.api.model.user.UserAuthenticate;
+import com.nuclear.realworld.api.model.user.UserResponse;
+import com.nuclear.realworld.api.model.user.UserToken;
 import com.nuclear.realworld.domain.entity.User;
 import com.nuclear.realworld.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
