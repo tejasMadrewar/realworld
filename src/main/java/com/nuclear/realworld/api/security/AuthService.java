@@ -6,7 +6,6 @@ import com.nuclear.realworld.api.model.user.UserResponse;
 import com.nuclear.realworld.api.model.user.UserToken;
 import com.nuclear.realworld.domain.entity.User;
 import com.nuclear.realworld.domain.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,13 +14,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
-@RequiredArgsConstructor
 @Service
 public class AuthService {
     final private UserService userService;
     final private TokenService tokenService;
     final private UserAssembler userAssembler;
     final private AuthenticationManager authenticationManager;
+
+    public AuthService(UserService userService, TokenService tokenService,
+                       UserAssembler userAssembler,
+                       AuthenticationManager authenticationManager) {
+        this.userService = userService;
+        this.tokenService = tokenService;
+        this.userAssembler = userAssembler;
+        this.authenticationManager = authenticationManager;
+    }
 
     public UserResponse registerUser(User user) {
         String token = tokenService.generateToken(defaultClaims(user),
@@ -52,8 +59,7 @@ public class AuthService {
 
     private HashMap<String, Object> defaultClaims(User user) {
         HashMap<String, Object> claims = new HashMap<>();
-        UserToken userToken = UserToken.builder()
-                .id(user.getId())
+        UserToken userToken = UserToken.Builder.builder().id(user.getId())
                 .build();
 
         claims.put("user", userToken);

@@ -9,11 +9,9 @@ import com.nuclear.realworld.domain.entity.User;
 import com.nuclear.realworld.domain.service.ProfileService;
 import com.nuclear.realworld.domain.service.UserService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("users")
 public class AuthController {
@@ -21,6 +19,16 @@ public class AuthController {
     final private ProfileService profileService;
     final private UserService userService;
     final private UserAssembler userAssembler;
+
+    public AuthController(AuthService authService,
+                          ProfileService profileService,
+                          UserService userService,
+                          UserAssembler userAssembler) {
+        this.authService = authService;
+        this.profileService = profileService;
+        this.userService = userService;
+        this.userAssembler = userAssembler;
+    }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)

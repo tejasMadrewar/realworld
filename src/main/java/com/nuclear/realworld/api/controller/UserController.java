@@ -6,17 +6,21 @@ import com.nuclear.realworld.api.model.user.UserUpdate;
 import com.nuclear.realworld.api.security.authorization.CheckSecurity;
 import com.nuclear.realworld.domain.entity.User;
 import com.nuclear.realworld.domain.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("user")
-@RequiredArgsConstructor
 public class UserController {
 
     final private UserService userService;
     final private UserAssembler userAssembler;
+
+    public UserController(UserService userService,
+                          UserAssembler userAssembler) {
+        this.userService = userService;
+        this.userAssembler = userAssembler;
+    }
 
     @GetMapping("")
     @CheckSecurity.Protected.canManage

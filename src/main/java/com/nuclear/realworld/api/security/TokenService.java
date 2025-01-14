@@ -7,7 +7,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -17,33 +16,33 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-@RequiredArgsConstructor
 public class TokenService {
 
     private final AuthProperties properties;
     private final UserRepository repository;
 
+    public TokenService(AuthProperties properties, UserRepository repository) {
+        this.properties = properties;
+        this.repository = repository;
+    }
 
     public String generateToken(String subject) {
         return buildToken(new HashMap<String, Object>(), subject);
     }
 
-    public String generateToken(HashMap<String, Object> extraClaims, String subject) {
+    public String generateToken(HashMap<String, Object> extraClaims,
+                                String subject) {
         return buildToken(extraClaims, subject);
     }
 
     private String buildToken(Map<String, Object> extraClaims, String subject) {
         var nowMillis = System.currentTimeMillis();
 
-        return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(subject)
-                .setIssuer("nuclear-realworld")
-                .setIssuedAt(new Date(nowMillis))
+        return Jwts.builder().setClaims(extraClaims).setSubject(subject)
+                .setIssuer("nuclear-realworld").setIssuedAt(new Date(nowMillis))
                 .setExpiration(new Date(nowMillis + properties.getToken()
                         .getExpiration()))
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(getKey(), SignatureAlgorithm.HS256).compact();
 
     }
 
@@ -53,18 +52,16 @@ public class TokenService {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimsTFunction) {
+    private <T> T extractClaim(String token,
+                               Function<Claims, T> claimsTFunction) {
         final Claims claims = extractAllClaims(token);
         return claimsTFunction.apply(claims);
     }
 
     private Claims extractAllClaims(String token) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+            return Jwts.parserBuilder().setSigningKey(getKey()).build()
+                    .parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException ex) {
             throw new RuntimeException("Invalid token.");
         }

@@ -10,12 +10,10 @@ import com.nuclear.realworld.domain.repository.ProfileRepository;
 import com.nuclear.realworld.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     final private UserRepository userRepository;
@@ -23,6 +21,17 @@ public class UserService {
     final private ProfileService profileService;
     final private PasswordEncoder passwordEncoder;
     final private AuthUtils authUtils;
+
+    public UserService(UserRepository userRepository,
+                       ProfileRepository profileRepository,
+                       ProfileService profileService,
+                       PasswordEncoder passwordEncoder, AuthUtils authUtils) {
+        this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
+        this.profileService = profileService;
+        this.passwordEncoder = passwordEncoder;
+        this.authUtils = authUtils;
+    }
 
     @Transactional
     public User save(User user, Profile profile) {

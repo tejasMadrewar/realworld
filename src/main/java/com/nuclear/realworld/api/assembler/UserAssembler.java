@@ -17,16 +17,11 @@ public class UserAssembler {
     }
 
     public UserResponse toResponse(User user) {
-        return UserResponse.builder()
-                .username(user.getProfile()
-                        .getUsername())
-                .email(user.getEmail())
-                .token(user.getToken())
-                .bio(user.getProfile()
-                        .getBio())
-                .image(user.getProfile()
-                        .getImage())
-                .build();
+        return UserResponse.Builder.builder()
+                .username(user.getProfile().getUsername())
+                .email(user.getEmail()).token(user.getToken())
+                .bio(user.getProfile().getBio())
+                .image(user.getProfile().getImage()).build();
     }
 
     public void copyToEntity(UserUpdate userUpdate, User user) {

@@ -7,11 +7,9 @@ import com.nuclear.realworld.api.security.authorization.CheckSecurity;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.service.ProfileService;
 import com.nuclear.realworld.domain.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("api/profile")
 public class ProfileController {
 
@@ -20,6 +18,14 @@ public class ProfileController {
     final private AuthUtils authUtils;
     final private ProfileAssembler profileAssembler;
 
+    public ProfileController(ProfileService profileService,
+                             UserService userService, AuthUtils authUtils,
+                             ProfileAssembler profileAssembler) {
+        this.profileService = profileService;
+        this.userService = userService;
+        this.authUtils = authUtils;
+        this.profileAssembler = profileAssembler;
+    }
 
     @GetMapping("{username}")
     @CheckSecurity.Public.canRead

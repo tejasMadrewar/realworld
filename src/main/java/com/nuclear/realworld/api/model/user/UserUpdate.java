@@ -3,22 +3,15 @@ package com.nuclear.realworld.api.model.user;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class UserUpdate {
+    @Nullable
+    public String username;
     @Email
     @Nullable
     private String email;
-
     @Nullable
     private String bio;
-
-    @Nullable
-    public String username;
-
     @Nullable
     private String image;
 

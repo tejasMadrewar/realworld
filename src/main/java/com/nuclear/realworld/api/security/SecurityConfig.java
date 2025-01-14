@@ -1,6 +1,5 @@
 package com.nuclear.realworld.api.security;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,14 +9,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
@@ -27,17 +24,19 @@ public class SecurityConfig {
 
     private final JwtSecurityFilter securityFilter;
 
+    public SecurityConfig(JwtSecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(
                                 HttpMethod.POST,
-                                PUBLIC_WRITE_ENDPOINTS)
-                        .permitAll()
+                                PUBLIC_WRITE_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_READ_ENDPOINTS)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                        .permitAll().anyRequest().authenticated())
                 .addFilterBefore(securityFilter,
                         UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -49,7 +48,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
