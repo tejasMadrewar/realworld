@@ -29,6 +29,12 @@ public class Profile {
             inverseJoinColumns = @JoinColumn(name = "following_id"))
     private Set<Profile> profiles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "profiles_articles",
+            joinColumns = @JoinColumn(name = "profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "article_id"))
+    private Set<Article> articles = new HashSet<>();
+
     public Profile() {
     }
 
