@@ -1,10 +1,15 @@
 package com.nuclear.realworld.api.model.profile;
 
-public class ProfileResponse {
-    String username;
-    String bio;
-    String image;
-    Boolean following;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.nuclear.realworld.api.model.BaseResponse;
+
+@JsonTypeName("profile")
+public class ProfileResponse extends BaseResponse {
+    private String username;
+    private String bio;
+    private String image;
+    private Boolean following;
 
     public String getUsername() {
         return username;

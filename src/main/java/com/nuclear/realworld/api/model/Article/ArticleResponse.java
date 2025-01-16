@@ -1,11 +1,15 @@
 package com.nuclear.realworld.api.model.Article;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.nuclear.realworld.api.model.BaseResponse;
 import com.nuclear.realworld.api.model.profile.ProfileResponse;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public class ArticleResponse {
+@JsonTypeName("article")
+public class ArticleResponse extends BaseResponse {
 
     private String slug;
     private String title;
@@ -17,6 +21,7 @@ public class ArticleResponse {
     private Boolean favorited;
     private Integer favoritesCount;
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
     private ProfileResponse author;
 
     public String getSlug() {

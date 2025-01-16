@@ -1,6 +1,10 @@
 package com.nuclear.realworld.api.model.user;
 
-public class UserResponse {
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.nuclear.realworld.api.model.BaseResponse;
+
+@JsonTypeName("user")
+public class UserResponse extends BaseResponse {
     public String email;
     public String token;
     public String username;
