@@ -24,4 +24,12 @@ public @interface CheckSecurity {
         }
     }
 
+    @interface Articles {
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @PreAuthorize("@authorizationConfig.isArticleAuthor(#slug)")
+        @interface canManage {
+        }
+    }
+
 }

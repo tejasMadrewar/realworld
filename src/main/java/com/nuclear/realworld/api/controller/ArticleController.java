@@ -3,6 +3,8 @@ package com.nuclear.realworld.api.controller;
 import com.nuclear.realworld.api.assembler.ArticleAssembler;
 import com.nuclear.realworld.api.model.Article.ArticleRegister;
 import com.nuclear.realworld.api.model.Article.ArticleResponse;
+import com.nuclear.realworld.api.security.AuthUtils;
+import com.nuclear.realworld.api.security.authorization.CheckSecurity;
 import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.Tag;
@@ -23,14 +25,17 @@ public class ArticleController {
     final private UserService userService;
     final private TagService tagService;
     final private ArticleService articleService;
+    final private AuthUtils authUtils;
 
     public ArticleController(ArticleAssembler articleAssembler,
                              UserService userService, TagService tagService,
-                             ArticleService articleService) {
+                             ArticleService articleService,
+                             AuthUtils authUtils) {
         this.articleAssembler = articleAssembler;
         this.userService = userService;
         this.tagService = tagService;
         this.articleService = articleService;
+        this.authUtils = authUtils;
     }
 
     @PostMapping("")
@@ -51,6 +56,18 @@ public class ArticleController {
 
     }
 
+    @GetMapping("{slug}")
+    @CheckSecurity.Public.canRead
+    public ArticleResponse getBySlug(@PathVariable String slug) {
+        Article article = articleService.getBySlug(slug);
+
+        if (authUtils.isAuthenticated()) {
+            Profile profile = userService.getCurrentUser().getProfile();
+            return articleAssembler.toResponse(profile, article);
+        }
+        return articleAssembler.toResponse(article);
+    }
+
     @PutMapping("")
     public String updateArticle() {
         return "asdf";
@@ -63,11 +80,6 @@ public class ArticleController {
 
     @GetMapping("feed")
     public String ArticleFeeds() {
-        return "asdf";
-    }
-
-    @GetMapping("feed/{slug}")
-    public String getArticle(@PathVariable String slug) {
         return "asdf";
     }
 

@@ -4,6 +4,7 @@ import com.github.slugify.Slugify;
 import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.Tag;
+import com.nuclear.realworld.domain.exception.ArticleNotFoundException;
 import com.nuclear.realworld.domain.exception.ArticleNotUniqueException;
 import com.nuclear.realworld.domain.repository.ArticleRepository;
 import org.springframework.stereotype.Service;
@@ -51,5 +52,11 @@ public class ArticleService {
         Optional<Article> existingArticle = articleRepository.findBySlug(slug);
         return existingArticle.isPresent() && !existingArticle.get()
                 .equals(article);
+    }
+
+    @Transactional(readOnly = true)
+    public Article getBySlug(String slug) {
+        return articleRepository.findBySlug(slug)
+                .orElseThrow(ArticleNotFoundException::new);
     }
 }
