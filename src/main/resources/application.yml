@@ -1,6 +1,15 @@
 spring:
   application:
     name: realworld
+  datasource:
+    url: ${JDBC_URL:jdbc:h2:mem:blog}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
 api:
   security:
     token:
