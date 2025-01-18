@@ -3,6 +3,7 @@ package com.nuclear.realworld.api.controller;
 import com.nuclear.realworld.api.assembler.ArticleAssembler;
 import com.nuclear.realworld.api.model.Article.ArticleRegister;
 import com.nuclear.realworld.api.model.Article.ArticleResponse;
+import com.nuclear.realworld.api.model.Article.ArticleUpdate;
 import com.nuclear.realworld.api.security.AuthUtils;
 import com.nuclear.realworld.api.security.authorization.CheckSecurity;
 import com.nuclear.realworld.domain.entity.Article;
@@ -72,18 +73,21 @@ public class ArticleController {
         return articleAssembler.toResponse(article);
     }
 
-//    @DeleteMapping("{slug}")
-//    @CheckSecurity.Articles.canManage
-//    public void deleteArticle(@PathVariable String slug) {
-//        Article article = articleService.getBySlug(slug);
-//        articleService.delete(article);
-//    }
-
-    @PutMapping("")
-    public String updateArticle() {
-        return "asdf";
+    @DeleteMapping("{slug}")
+    @CheckSecurity.Articles.canManage
+    public void deleteArticle(@PathVariable String slug) {
+        Article article = articleService.getBySlug(slug);
+        articleService.delete(article);
     }
 
+    @PutMapping("{slug}")
+    @CheckSecurity.Articles.canManage
+    public ArticleResponse updateArticle(@PathVariable String slug,
+                                         @RequestBody ArticleUpdate update) {
+        Article article = articleService.getBySlug(slug);
+        articleAssembler.copyToEntity(update, article);
+        return articleAssembler.toResponse(articleService.save(article));
+    }
 
     @GetMapping("feed")
     public String ArticleFeeds() {

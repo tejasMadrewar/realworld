@@ -2,6 +2,7 @@ package com.nuclear.realworld.api.assembler;
 
 import com.nuclear.realworld.api.model.Article.ArticleRegister;
 import com.nuclear.realworld.api.model.Article.ArticleResponse;
+import com.nuclear.realworld.api.model.Article.ArticleUpdate;
 import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.Tag;
@@ -14,6 +15,13 @@ import java.util.List;
 public class ArticleAssembler {
 
     ModelMapper modelMapper = new ModelMapper();
+
+    public void copyToEntity(ArticleUpdate update, Article article) {
+        if (update.getTitle() != null) article.setTitle(update.getTitle());
+        if (update.getDescription() != null)
+            article.setDescription(update.getDescription());
+        if (update.getBody() != null) article.setBody(update.getBody());
+    }
 
     public ArticleResponse toResponse(Article article) {
         ArticleResponse response = modelMapper.map(article,

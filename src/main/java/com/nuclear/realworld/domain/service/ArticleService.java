@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ArticleService {
@@ -70,5 +71,12 @@ public class ArticleService {
     public Article profileUnfavorited(Profile profile, Article article) {
         article.removeFavorite(profile);
         return articleRepository.save(article);
+    }
+
+    @Transactional
+    public void delete(Article article) {
+        Set<Profile> favorites = article.getFavorites();
+        favorites.forEach(u -> u.unfavoriteArticle(article));
+        articleRepository.delete(article);
     }
 }
