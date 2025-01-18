@@ -46,6 +46,21 @@ public class Article {
     public Article() {
     }
 
+    public void updateFavoriteCount() {
+        setFavoritesCount(getFavorites().size());
+    }
+
+    public void addFavorite(Profile profile) {
+        getFavorites().add(profile);
+        updateFavoriteCount();
+    }
+
+    public void removeFavorite(Profile profile) {
+        getFavorites().remove(profile);
+        updateFavoriteCount();
+    }
+
+
     public void addTag(Tag tag) {
         getTagList().add(tag);
     }

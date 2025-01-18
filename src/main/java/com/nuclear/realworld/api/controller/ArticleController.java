@@ -9,6 +9,7 @@ import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.Tag;
 import com.nuclear.realworld.domain.service.ArticleService;
+import com.nuclear.realworld.domain.service.ProfileService;
 import com.nuclear.realworld.domain.service.TagService;
 import com.nuclear.realworld.domain.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -25,16 +26,19 @@ public class ArticleController {
     final private UserService userService;
     final private TagService tagService;
     final private ArticleService articleService;
+    final private ProfileService profileService;
     final private AuthUtils authUtils;
 
     public ArticleController(ArticleAssembler articleAssembler,
                              UserService userService, TagService tagService,
                              ArticleService articleService,
+                             ProfileService profileService,
                              AuthUtils authUtils) {
         this.articleAssembler = articleAssembler;
         this.userService = userService;
         this.tagService = tagService;
         this.articleService = articleService;
+        this.profileService = profileService;
         this.authUtils = authUtils;
     }
 
@@ -68,19 +72,45 @@ public class ArticleController {
         return articleAssembler.toResponse(article);
     }
 
+//    @DeleteMapping("{slug}")
+//    @CheckSecurity.Articles.canManage
+//    public void deleteArticle(@PathVariable String slug) {
+//        Article article = articleService.getBySlug(slug);
+//        articleService.delete(article);
+//    }
+
     @PutMapping("")
     public String updateArticle() {
         return "asdf";
     }
 
-    @DeleteMapping("")
-    public String deleteArticle() {
-        return "asdf";
-    }
 
     @GetMapping("feed")
     public String ArticleFeeds() {
         return "asdf";
+    }
+
+
+    @PostMapping("{slug}/favorite")
+    @CheckSecurity.Protected.canManage
+    public ArticleResponse favoriteArticle(@PathVariable String slug) {
+        Article article = articleService.getBySlug(slug);
+        Profile profile = userService.getCurrentUser().getProfile();
+
+        profile = profileService.favorite(profile, article);
+        article = articleService.profileFavorited(profile, article);
+        return articleAssembler.toResponse(profile, article);
+    }
+
+    @DeleteMapping("{slug}/favorite")
+    @CheckSecurity.Protected.canManage
+    public ArticleResponse unfavoriteArticle(@PathVariable String slug) {
+        Article article = articleService.getBySlug(slug);
+        Profile profile = userService.getCurrentUser().getProfile();
+
+        profile = profileService.unfavorite(profile, article);
+        article = articleService.profileUnfavorited(profile, article);
+        return articleAssembler.toResponse(profile, article);
     }
 
 }

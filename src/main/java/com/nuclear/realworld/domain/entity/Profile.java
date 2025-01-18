@@ -130,6 +130,22 @@ public class Profile {
         this.profiles = profiles;
     }
 
+    public Set<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(Set<Article> articles) {
+        this.articles = articles;
+    }
+
+    public void favoriteArticle(Article article) {
+        getArticles().add(article);
+    }
+
+    public void unfavoriteArticle(Article article) {
+        getArticles().remove(article);
+    }
+
     public static final class Builder {
         private String username;
         private String bio;

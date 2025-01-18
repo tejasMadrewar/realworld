@@ -59,4 +59,16 @@ public class ArticleService {
         return articleRepository.findBySlug(slug)
                 .orElseThrow(ArticleNotFoundException::new);
     }
+
+    @Transactional
+    public Article profileFavorited(Profile profile, Article article) {
+        article.addFavorite(profile);
+        return articleRepository.save(article);
+    }
+
+    @Transactional
+    public Article profileUnfavorited(Profile profile, Article article) {
+        article.removeFavorite(profile);
+        return articleRepository.save(article);
+    }
 }

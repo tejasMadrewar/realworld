@@ -1,5 +1,6 @@
 package com.nuclear.realworld.domain.service;
 
+import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.User;
 import com.nuclear.realworld.domain.exception.ProfileNotFoundException;
@@ -42,4 +43,15 @@ public class ProfileService {
         profileRepository.save(current);
     }
 
+    @Transactional
+    public Profile favorite(Profile profile, Article article) {
+        profile.favoriteArticle(article);
+        return profileRepository.save(profile);
+    }
+
+    @Transactional
+    public Profile unfavorite(Profile profile, Article article) {
+        profile.unfavoriteArticle(article);
+        return profileRepository.save(profile);
+    }
 }
