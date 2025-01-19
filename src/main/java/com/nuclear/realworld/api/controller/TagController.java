@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tags")
+@RequestMapping("api/tags")
 public class TagController {
     private final TagService tagService;
     private final TagAssembler tagAssembler;
@@ -19,7 +19,7 @@ public class TagController {
         this.tagAssembler = tagAssembler;
     }
 
-    @GetMapping
+    @GetMapping("")
     @CheckSecurity.Public.canRead
     public TagListResponse list() {
         return tagAssembler.toCollectionResponse(tagService.listAll());

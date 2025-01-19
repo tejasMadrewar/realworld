@@ -1,12 +1,15 @@
 package com.nuclear.realworld.domain.service;
 
 import com.github.slugify.Slugify;
+import com.nuclear.realworld.api.model.Article.ArticleSpecification;
 import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.Tag;
 import com.nuclear.realworld.domain.exception.ArticleNotFoundException;
 import com.nuclear.realworld.domain.exception.ArticleNotUniqueException;
 import com.nuclear.realworld.domain.repository.ArticleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,14 @@ public class ArticleService {
     public ArticleService(ArticleRepository articleRepository, Slugify slg) {
         this.articleRepository = articleRepository;
         this.slg = slg;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Article> listAll(ArticleSpecification filter,
+                                 Pageable pageable) {
+        //return articleRepository.findAll(filter, pageable);
+        return articleRepository.findAll(pageable); // todo: implement the
+        // specification with user param
     }
 
     @Transactional
@@ -79,4 +90,5 @@ public class ArticleService {
         favorites.forEach(u -> u.unfavoriteArticle(article));
         articleRepository.delete(article);
     }
+
 }

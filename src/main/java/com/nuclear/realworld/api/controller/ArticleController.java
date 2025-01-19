@@ -1,9 +1,7 @@
 package com.nuclear.realworld.api.controller;
 
 import com.nuclear.realworld.api.assembler.ArticleAssembler;
-import com.nuclear.realworld.api.model.Article.ArticleRegister;
-import com.nuclear.realworld.api.model.Article.ArticleResponse;
-import com.nuclear.realworld.api.model.Article.ArticleUpdate;
+import com.nuclear.realworld.api.model.Article.*;
 import com.nuclear.realworld.api.security.AuthUtils;
 import com.nuclear.realworld.api.security.authorization.CheckSecurity;
 import com.nuclear.realworld.domain.entity.Article;
@@ -13,6 +11,9 @@ import com.nuclear.realworld.domain.service.ArticleService;
 import com.nuclear.realworld.domain.service.ProfileService;
 import com.nuclear.realworld.domain.service.TagService;
 import com.nuclear.realworld.domain.service.UserService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,11 @@ import java.util.List;
 @RestController
 @RequestMapping("api/articles")
 public class ArticleController {
+
+    private static final String DEFAULT_FILTER_LIMIT = "20";
+    private static final String DEFAULT_FILTER_OFFSET = "0";
+    private static final Sort DEFAULT_FILTER_SORT = Sort.by(Sort.Direction.DESC,
+                                                            "createdAt");
 
     final private ArticleAssembler articleAssembler;
     final private UserService userService;
@@ -43,6 +49,26 @@ public class ArticleController {
         this.authUtils = authUtils;
     }
 
+    @GetMapping
+    @CheckSecurity.Public.canRead
+    public ArticleWrapper getAll(ArticleSpecification filter,
+                                 @RequestParam(required = false,
+                                         defaultValue = DEFAULT_FILTER_LIMIT)
+                                 int limit, @RequestParam(required = false,
+                    defaultValue = DEFAULT_FILTER_OFFSET) int offset) {
+
+        Pageable pageable = PageRequest.of(offset, limit, DEFAULT_FILTER_SORT);
+        List<Article> articles = articleService.listAll(filter, pageable)
+                .getContent();
+
+        if (authUtils.isAuthenticated()) {
+            Profile profile = userService.getCurrentUser().getProfile();
+            return articleAssembler.toCollectionModel(profile, articles);
+        }
+        return articleAssembler.toCollectionModel(articles);
+    }
+
+
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public ArticleResponse createArticle(
@@ -57,7 +83,9 @@ public class ArticleController {
         Article article = articleAssembler.toEntity(register);
 
         return articleAssembler.toResponse(profile,
-                articleService.save(article, profile, tags));
+                                           articleService.save(article,
+                                                               profile,
+                                                               tags));
 
     }
 
@@ -75,6 +103,7 @@ public class ArticleController {
 
     @DeleteMapping("{slug}")
     @CheckSecurity.Articles.canManage
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteArticle(@PathVariable String slug) {
         Article article = articleService.getBySlug(slug);
         articleService.delete(article);

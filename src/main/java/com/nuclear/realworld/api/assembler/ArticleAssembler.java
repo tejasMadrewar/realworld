@@ -3,6 +3,7 @@ package com.nuclear.realworld.api.assembler;
 import com.nuclear.realworld.api.model.Article.ArticleRegister;
 import com.nuclear.realworld.api.model.Article.ArticleResponse;
 import com.nuclear.realworld.api.model.Article.ArticleUpdate;
+import com.nuclear.realworld.api.model.Article.ArticleWrapper;
 import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.Tag;
@@ -25,7 +26,7 @@ public class ArticleAssembler {
 
     public ArticleResponse toResponse(Article article) {
         ArticleResponse response = modelMapper.map(article,
-                ArticleResponse.class);
+                                                   ArticleResponse.class);
         response.setTagList(tagsToList(article.getTagList().stream().toList()));
         return response;
     }
@@ -49,5 +50,23 @@ public class ArticleAssembler {
 
     private List<String> tagsToList(List<Tag> tags) {
         return tags.stream().map(Tag::getName).toList();
+    }
+
+    public ArticleWrapper toCollectionModel(List<Article> articles) {
+        List<ArticleResponse> content = articles.stream().map(this::toResponse)
+                .toList();
+        return buildResponse(content);
+    }
+
+    public ArticleWrapper toCollectionModel(Profile profile,
+                                            List<Article> articles) {
+        List<ArticleResponse> content = articles.stream()
+                .map(a -> toResponse(profile, a)).toList();
+        return buildResponse(content);
+    }
+
+    private ArticleWrapper buildResponse(List<ArticleResponse> articles) {
+        return ArticleWrapper.Builder.builder().articles(articles)
+                .articleCount(articles.size()).build();
     }
 }

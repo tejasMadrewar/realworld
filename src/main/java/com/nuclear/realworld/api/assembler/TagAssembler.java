@@ -11,6 +11,5 @@ public class TagAssembler {
     public TagListResponse toCollectionResponse(List<Tag> tags) {
         List<String> tagNames = tags.stream().map(Tag::getName).toList();
         return TagListResponse.Builder.builder().tags(tagNames).build();
-
     }
 }

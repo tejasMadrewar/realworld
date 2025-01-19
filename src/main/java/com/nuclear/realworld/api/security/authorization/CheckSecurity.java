@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 public @interface CheckSecurity {
+
     @interface Public {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
