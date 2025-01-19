@@ -65,4 +65,15 @@ public class CommentController {
                                                                article,
                                                                author));
     }
+
+    @DeleteMapping("/{commentId}")
+    @CheckSecurity.Comments.canDelete
+    public void delete(@PathVariable String slug,
+                       @PathVariable Long commentId) {
+        Article article = articleService.getBySlug(slug);
+        Comment comment = commentService.getById(commentId);
+        commentService.delete(comment);
+    }
+
+
 }

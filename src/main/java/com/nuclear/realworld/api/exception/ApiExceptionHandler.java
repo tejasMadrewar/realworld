@@ -1,9 +1,6 @@
 package com.nuclear.realworld.api.exception;
 
-import com.nuclear.realworld.domain.exception.BusinessException;
-import com.nuclear.realworld.domain.exception.EmailNotAvailableException;
-import com.nuclear.realworld.domain.exception.ProfileNotFoundException;
-import com.nuclear.realworld.domain.exception.UsernameNotAvilableException;
+import com.nuclear.realworld.domain.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,6 +30,11 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ProfileNotFoundException.class)
     public String handleProfileNotFoundException(ProfileNotFoundException ex) {
         return "Error: Profile not found.";
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public String handleCommentNotFoundException(CommentNotFoundException ex) {
+        return "Error: Comment not found.";
     }
 
     @ExceptionHandler(BusinessException.class)

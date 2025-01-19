@@ -33,4 +33,12 @@ public @interface CheckSecurity {
         }
     }
 
+    @interface Comments {
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @PreAuthorize("@authorizationConfig.isCommentAuthor(#commentId)")
+        @interface canDelete {
+        }
+    }
+
 }
