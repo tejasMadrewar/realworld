@@ -136,8 +136,19 @@ public class ArticleController {
     }
 
     @GetMapping("feed")
-    public String ArticleFeeds() {
-        return "asdf";
+    @CheckSecurity.Public.canRead
+    public ArticleWrapper ArticleFeed(
+            @RequestParam(required = false, defaultValue = DEFAULT_FILTER_LIMIT)
+            int limit,//
+            @RequestParam(required = false,
+                    defaultValue = DEFAULT_FILTER_OFFSET) int offset) {
+
+        Profile profile = userService.getCurrentUser().getProfile();
+        Pageable pageable = PageRequest.of(offset, limit, DEFAULT_FILTER_SORT);
+        List<Article> articles = articleService.getFeedByUser(profile,
+                                                              pageable);
+        return articleAssembler.toCollectionModel(profile, articles);
+
     }
 
 

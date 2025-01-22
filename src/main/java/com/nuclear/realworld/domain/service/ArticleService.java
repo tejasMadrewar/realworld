@@ -88,4 +88,9 @@ public class ArticleService {
         articleRepository.delete(article);
     }
 
+    @Transactional(readOnly = true)
+    public List<Article> getFeedByUser(Profile profile, Pageable pageable) {
+        List<Profile> followed = profile.getProfiles().stream().toList();
+        return articleRepository.findAllByAuthorIn(followed, pageable);
+    }
 }
