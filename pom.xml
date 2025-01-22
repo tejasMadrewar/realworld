@@ -111,11 +111,11 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>net.kaczmarzyk</groupId>
-            <artifactId>specification-arg-resolver</artifactId>
-            <version>${specification-arg-resolver.version}</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>net.kaczmarzyk</groupId>-->
+        <!--            <artifactId>specification-arg-resolver</artifactId>-->
+        <!--            <version>${specification-arg-resolver.version}</version>-->
+        <!--        </dependency>-->
     </dependencies>
 
     <build>

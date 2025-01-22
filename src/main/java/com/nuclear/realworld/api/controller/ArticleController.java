@@ -1,7 +1,10 @@
 package com.nuclear.realworld.api.controller;
 
 import com.nuclear.realworld.api.assembler.ArticleAssembler;
-import com.nuclear.realworld.api.model.Article.*;
+import com.nuclear.realworld.api.model.Article.ArticleRegister;
+import com.nuclear.realworld.api.model.Article.ArticleResponse;
+import com.nuclear.realworld.api.model.Article.ArticleUpdate;
+import com.nuclear.realworld.api.model.Article.ArticleWrapper;
 import com.nuclear.realworld.api.security.AuthUtils;
 import com.nuclear.realworld.api.security.authorization.CheckSecurity;
 import com.nuclear.realworld.domain.entity.Article;
@@ -11,9 +14,11 @@ import com.nuclear.realworld.domain.service.ArticleService;
 import com.nuclear.realworld.domain.service.ProfileService;
 import com.nuclear.realworld.domain.service.TagService;
 import com.nuclear.realworld.domain.service.UserService;
+import com.nuclear.realworld.infra.spec.ArticleSpecification;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,14 +56,26 @@ public class ArticleController {
 
     @GetMapping
     @CheckSecurity.Public.canRead
-    public ArticleWrapper getAll(ArticleSpecification filter,
+    public ArticleWrapper getAll(@RequestParam(required = false) String tag,//
+                                 @RequestParam(required = false,
+                                         defaultValue = DEFAULT_FILTER_OFFSET)
+                                 int offset,//
                                  @RequestParam(required = false,
                                          defaultValue = DEFAULT_FILTER_LIMIT)
-                                 int limit, @RequestParam(required = false,
-                    defaultValue = DEFAULT_FILTER_OFFSET) int offset) {
+                                 int limit,//
+                                 @RequestParam(required = false) String author,
+//
+                                 @RequestParam(required = false)
+                                 String favorited) {
+
+        Specification<Article> spec = Specification//
+                .where(ArticleSpecification.hasTag(tag))//
+                .and(ArticleSpecification.hasAuthor(author))//
+                .and(ArticleSpecification.hasFavorited(favorited));
 
         Pageable pageable = PageRequest.of(offset, limit, DEFAULT_FILTER_SORT);
-        List<Article> articles = articleService.listAll(filter, pageable)
+
+        List<Article> articles = articleService.listAll(spec, pageable)
                 .getContent();
 
         if (authUtils.isAuthenticated()) {

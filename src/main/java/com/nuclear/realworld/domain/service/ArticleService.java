@@ -1,7 +1,6 @@
 package com.nuclear.realworld.domain.service;
 
 import com.github.slugify.Slugify;
-import com.nuclear.realworld.api.model.Article.ArticleSpecification;
 import com.nuclear.realworld.domain.entity.Article;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.Tag;
@@ -10,6 +9,7 @@ import com.nuclear.realworld.domain.exception.ArticleNotUniqueException;
 import com.nuclear.realworld.domain.repository.ArticleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +29,8 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Article> listAll(ArticleSpecification filter,
-                                 Pageable pageable) {
-        //return articleRepository.findAll(filter, pageable);
-        return articleRepository.findAll(pageable); // todo: implement the
-        // specification with user param
+    public Page<Article> listAll(Specification filter, Pageable pageable) {
+        return articleRepository.findAll(filter, pageable); // todo: implement
     }
 
     @Transactional
