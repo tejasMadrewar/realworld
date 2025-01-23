@@ -1,67 +1,213 @@
 package com.nuclear.realworld.api.exception;
 
+import com.nuclear.realworld.api.security.exception.EmailNotFoundException;
 import com.nuclear.realworld.domain.exception.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
-public class ApiExceptionHandler {
+public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(UsernameNotAvilableException.class)
-    public String handleUsernameAlreadyExistsException(
-            UsernameNotAvilableException ex) {
-        return "Error: Username already exists.";
+    private static final String GENERIC_ERROR_MESSAGE = "Oops! Something went wrong.";
+
+    private Error.Builder createErrorBuilder(String message) {
+        return Error.Builder.builder().status("error").message(message);
     }
 
-    @ExceptionHandler(EmailNotAvailableException.class)
-    public String handleEmailAlreadyExistsException(
-            EmailNotAvailableException ex) {
-        return "Error: email already exists.";
+    private Error.Builder createErrorBuilder(Map<String, Object> errors) {
+        return Error.Builder.builder().errors(errors);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex,
+                                                             Object body,
+                                                             HttpHeaders headers,
+                                                             HttpStatusCode status,
+                                                             WebRequest request) {
+
+        if (body == null || body instanceof String) {
+            body = createErrorBuilder(GENERIC_ERROR_MESSAGE).build();
+        }
+        return super.handleExceptionInternal(ex,
+                                             body,
+                                             headers,
+                                             status,
+                                             request);
+    }
+
+    private ResponseEntity<?> handleResourceNotFound(
+            ResourceNotFoundException ex, WebRequest request, String name) {
+
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        Error error = createErrorBuilder(toMap(name, ex.getMessage())).build();
+
+        return handleExceptionInternal(ex,
+                                       error,
+                                       new HttpHeaders(),
+                                       status,
+                                       request);
+    }
+
+    @ExceptionHandler(ArticleNotFoundException.class)
+    public ResponseEntity<?> handleArticleNotFound(ArticleNotFoundException ex,
+                                                   WebRequest request) {
+        return handleResourceNotFound(ex, request, "article");
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<?> handleEmailNotFound(EmailNotFoundException ex,
+                                                 WebRequest request) {
+        return handleResourceNotFound(ex, request, "email");
+    }
+
+    @ExceptionHandler(TagNotFoundException.class)
+    public ResponseEntity<?> handleTagNotFound(TagNotFoundException ex,
+                                               WebRequest request) {
+        return handleResourceNotFound(ex, request, "email");
     }
 
     @ExceptionHandler(ProfileNotFoundException.class)
-    public String handleProfileNotFoundException(ProfileNotFoundException ex) {
-        return "Error: Profile not found.";
+    public ResponseEntity<?> handleProfileNotFound(ProfileNotFoundException ex,
+                                                   WebRequest request) {
+        return handleResourceNotFound(ex, request, "profile");
     }
 
     @ExceptionHandler(CommentNotFoundException.class)
-    public String handleCommentNotFoundException(CommentNotFoundException ex) {
-        return "Error: Comment not found.";
+    public ResponseEntity<?> handleCommentNotFound(CommentNotFoundException ex,
+                                                   WebRequest request) {
+        return handleResourceNotFound(ex, request, "comment");
     }
 
     @ExceptionHandler(BusinessException.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleBusinessxception(BusinessException ex,
-                                         WebRequest request) {
-        return "Error: " + ex.getMessage();
+    public ResponseEntity<?> handleBusinessException(BusinessException ex,
+                                                     WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        Error error = createErrorBuilder(ex.getMessage()).build();
+        return handleExceptionInternal(ex,
+                                       error,
+                                       new HttpHeaders(),
+                                       status,
+                                       request);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorMsg handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+    private ResponseEntity<?> handleTaken(TakenException ex, WebRequest request,
+                                          String fieldName) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        String message = ex.getMessage();
 
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+        Error error = createErrorBuilder(toMap(fieldName, message)).build();
+        return handleExceptionInternal(ex,
+                                       error,
+                                       new HttpHeaders(),
+                                       status,
+                                       request);
+    }
+
+    @ExceptionHandler(EmailTakenException.class)
+    public ResponseEntity<?> handleEmailTaken(EmailTakenException ex,
+                                              WebRequest request) {
+        return handleTaken(ex, request, "email");
+    }
+
+    @ExceptionHandler(UsernameTakenException.class)
+    public ResponseEntity<?> handleUsernameTaken(UsernameTakenException ex,
+                                                 WebRequest request) {
+        return handleTaken(ex, request, "username");
+    }
+
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex,
+                                                WebRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        String message = "You don't have access to this resource";
+        Error error = createErrorBuilder(message).build();
+
+        return handleExceptionInternal(ex,
+                                       error,
+                                       new HttpHeaders(),
+                                       status,
+                                       request);
+    }
+
+    @ExceptionHandler(ArticleNotUniqueException.class)
+    public ResponseEntity<?> handleArticleNotUnique(
+            ArticleNotUniqueException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        String message = ex.getMessage();
+        Error error = createErrorBuilder(toMap("title", message)).build();
+
+        return handleExceptionInternal(ex,
+                                       error,
+                                       new HttpHeaders(),
+                                       status,
+                                       request);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex,
+                                                   WebRequest request) {
+
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        String message = ex.getMessage();
+        Error error = createErrorBuilder(message).build();
+        return handleExceptionInternal(ex,
+                                       error,
+                                       new HttpHeaders(),
+                                       status,
+                                       request);
+    }
+
+    public ResponseEntity<Object> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex, HttpHeaders headers,
+            HttpStatusCode status, WebRequest request) {
+        return handleValidationInternal(ex,
+                                        ex.getBindingResult(),
+                                        headers,
+                                        status,
+                                        request);
+    }
+
+    private ResponseEntity<Object> handleValidationInternal(Exception ex,
+                                                            BindingResult bindingResult,
+                                                            HttpHeaders headers,
+                                                            HttpStatusCode statusCode,
+                                                            WebRequest request) {
+        var status = HttpStatus.valueOf(statusCode.value());
+
+        var map = new HashMap<String, Object>();
+        bindingResult.getFieldErrors().forEach(fieldError -> {
+            map.put(fieldError.getField(),
+                    toList(fieldError.getDefaultMessage()));
         });
-        return new ErrorMsg(errors);
+
+        var error = createErrorBuilder(map).build();
+        return handleExceptionInternal(ex, error, headers, status, request);
     }
 
-    public class ErrorMsg {
-        final public Map<String, String> errors;
-
-        ErrorMsg(Map<String, String> errors) {
-            this.errors = errors;
-        }
+    private List<String> toList(String message) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(message);
+        return list;
     }
+
+    private Map<String, Object> toMap(String field, String message) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(field, toList(message));
+        return map;
+    }
+
+
 }

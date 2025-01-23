@@ -1,5 +1,6 @@
 package com.nuclear.realworld.api.security;
 
+import com.nuclear.realworld.api.exception.RestAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,9 +24,12 @@ public class SecurityConfig {
     private static final String[] PUBLIC_READ_ENDPOINTS = {"/profiles"};
 
     private final JwtSecurityFilter securityFilter;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
 
-    public SecurityConfig(JwtSecurityFilter securityFilter) {
+    public SecurityConfig(JwtSecurityFilter securityFilter,
+                          RestAccessDeniedHandler restAccessDeniedHandler) {
         this.securityFilter = securityFilter;
+        this.restAccessDeniedHandler = restAccessDeniedHandler;
     }
 
     @Bean
@@ -37,8 +41,11 @@ public class SecurityConfig {
                                 PUBLIC_WRITE_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_READ_ENDPOINTS)
                         .permitAll().anyRequest().authenticated())
+                .anonymous(AbstractHttpConfigurer::disable)
+                .exceptionHandling(handler -> handler.accessDeniedHandler(
+                        restAccessDeniedHandler))
                 .addFilterBefore(securityFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                                 UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

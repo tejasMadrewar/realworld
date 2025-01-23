@@ -4,8 +4,8 @@ import com.nuclear.realworld.api.security.AuthUtils;
 import com.nuclear.realworld.api.security.exception.EmailNotFoundException;
 import com.nuclear.realworld.domain.entity.Profile;
 import com.nuclear.realworld.domain.entity.User;
-import com.nuclear.realworld.domain.exception.EmailNotAvailableException;
-import com.nuclear.realworld.domain.exception.UsernameNotAvilableException;
+import com.nuclear.realworld.domain.exception.EmailTakenException;
+import com.nuclear.realworld.domain.exception.UsernameTakenException;
 import com.nuclear.realworld.domain.repository.ProfileRepository;
 import com.nuclear.realworld.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -54,13 +54,13 @@ public class UserService {
 
     private void checkEmailAvailablity(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new EmailNotAvailableException();
+            throw new EmailTakenException();
         }
     }
 
     private void checkUsernameAvailability(String username) {
         if (profileRepository.existsByUsername(username)) {
-            throw new UsernameNotAvilableException();
+            throw new UsernameTakenException();
         }
     }
 

@@ -35,6 +35,6 @@ public class UserController {
         User currentUser = userService.getCurrentUser();
         userAssembler.copyToEntity(userUpdate, currentUser);
         return userAssembler.toResponse(userService.save(currentUser,
-                currentUser.getProfile()));
+                                                         currentUser.getProfile()));
     }
 }

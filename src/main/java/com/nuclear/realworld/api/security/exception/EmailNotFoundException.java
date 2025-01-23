@@ -1,4 +1,6 @@
 package com.nuclear.realworld.api.security.exception;
 
-public class EmailNotFoundException extends RuntimeException {
+import com.nuclear.realworld.domain.exception.ResourceNotFoundException;
+
+public class EmailNotFoundException extends ResourceNotFoundException {
 }
