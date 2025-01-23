@@ -1,11 +1,12 @@
 package com.nuclear.realworld.api.model.Article;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.nuclear.realworld.api.model.BaseResponse;
 
 import java.util.Set;
 
 @JsonTypeName("article")
-public class ArticleRegister {
+public class ArticleRegister extends BaseResponse {
 
     private String title;
     private String description;

@@ -1,8 +1,11 @@
 package com.nuclear.realworld.api.model.user;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.nuclear.realworld.api.model.BaseResponse;
 import jakarta.validation.constraints.NotBlank;
 
-public class UserAuthenticate {
+@JsonTypeName("user")
+public class UserAuthenticate extends BaseResponse {
     @NotBlank
     public String email;
     @NotBlank
