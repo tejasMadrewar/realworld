@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private static final String[] PUBLIC_WRITE_ENDPOINTS = {"/users", "users/login"};
-    private static final String[] PUBLIC_READ_ENDPOINTS = {"/profiles"};
+    private static final String[] PUBLIC_READ_ENDPOINTS = {"/api/profile", "/api/profile/*", "/api/articles", "/api/articles/*", "/api/articles/**", "/api/tags",};
 
     private final JwtSecurityFilter securityFilter;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
@@ -45,7 +46,8 @@ public class SecurityConfig {
                 .exceptionHandling(handler -> handler.accessDeniedHandler(
                         restAccessDeniedHandler))
                 .addFilterBefore(securityFilter,
-                                 UsernamePasswordAuthenticationFilter.class);
+                                 UsernamePasswordAuthenticationFilter.class)
+                .formLogin(Customizer.withDefaults());
         return http.build();
     }
 
