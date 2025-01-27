@@ -1,6 +1,7 @@
 package com.nuclear.realworld.api.security;
 
 import com.nuclear.realworld.api.exception.RestAccessDeniedHandler;
+import com.nuclear.realworld.api.exception.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,11 +27,15 @@ public class SecurityConfig {
 
     private final JwtSecurityFilter securityFilter;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
 
     public SecurityConfig(JwtSecurityFilter securityFilter,
-                          RestAccessDeniedHandler restAccessDeniedHandler) {
+                          RestAccessDeniedHandler restAccessDeniedHandler,
+                          RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
         this.securityFilter = securityFilter;
         this.restAccessDeniedHandler = restAccessDeniedHandler;
+        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
 
     @Bean
@@ -44,7 +49,8 @@ public class SecurityConfig {
                         .permitAll().anyRequest().authenticated())
                 .anonymous(AbstractHttpConfigurer::disable)
                 .exceptionHandling(handler -> handler.accessDeniedHandler(
-                        restAccessDeniedHandler))
+                                restAccessDeniedHandler)
+                        .authenticationEntryPoint(restAuthenticationEntryPoint))
                 .addFilterBefore(securityFilter,
                                  UsernamePasswordAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults());

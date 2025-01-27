@@ -129,6 +129,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleTaken(ex, request, "username");
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex,
                                                 WebRequest request) {
         HttpStatus status = HttpStatus.FORBIDDEN;
@@ -208,6 +209,5 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         map.put(field, toList(message));
         return map;
     }
-
 
 }
